@@ -1,0 +1,19 @@
+{
+  "name": "Stance — corpus logger",
+  "short_name": "Stance",
+  "description": "Flags, morning stance and evening episodes, committed to your own private repo.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0e655f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

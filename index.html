@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stance">
+<meta name="theme-color" content="#0e655f">
+<link rel="manifest" href="manifest.json">
+<title>Stance</title>
+<style>
+:root{
+  --ink:#16202a; --body:#26333c; --mut:#6d7d87; --rule:#d9e0dc; --hair:#edf1ee;
+  --teal:#0e655f; --teall:#e9f1ef; --clay:#9d4e18; --clayl:#fbf1e7;
+  --sand:#f5f7f5; --bg:#ffffff; --card:#ffffff; --shadow:0 1px 2px rgba(22,32,42,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e9eeec; --body:#c6d0cd; --mut:#8b9a98; --rule:#2c3a3a; --hair:#243030;
+    --teal:#52b3a6; --teall:#12211f; --clay:#d38b52; --clayl:#231a12;
+    --sand:#161d1d; --bg:#0e1414; --card:#141c1c; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e9eeec; --body:#c6d0cd; --mut:#8b9a98; --rule:#2c3a3a; --hair:#243030;
+  --teal:#52b3a6; --teall:#12211f; --clay:#d38b52; --clayl:#231a12;
+  --sand:#161d1d; --bg:#0e1414; --card:#141c1c; --shadow:none;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--body);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  padding-bottom:env(safe-area-inset-bottom);
+  overscroll-behavior-y:contain;
+}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 120px}
+header{
+  position:sticky;top:0;z-index:20;background:var(--bg);
+  padding:calc(env(safe-area-inset-top) + 12px) 16px 0;
+  max-width:640px;margin:0 auto;
+}
+.brow{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.brand{font-weight:700;color:var(--teal);letter-spacing:.14em;font-size:12px;text-transform:uppercase}
+.day{color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums}
+nav{display:flex;gap:6px;margin:12px 0 0;border-bottom:1px solid var(--rule)}
+nav button{
+  flex:1;appearance:none;background:none;border:0;border-bottom:2px solid transparent;
+  color:var(--mut);font:inherit;font-size:14px;font-weight:600;padding:10px 4px 9px;cursor:pointer;
+}
+nav button[aria-selected="true"]{color:var(--teal);border-bottom-color:var(--teal)}
+h2{font-size:19px;line-height:1.25;color:var(--ink);margin:22px 0 4px;font-weight:700}
+.sub{color:var(--mut);font-size:13.5px;line-height:1.45;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px;margin:0 0 12px;box-shadow:var(--shadow)}
+label.fld{display:block;font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.04em;text-transform:uppercase;margin:0 0 6px}
+input[type=text],textarea,input[type=password],select{
+  width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);
+  border:1px solid var(--rule);border-radius:9px;padding:11px 12px;
+}
+textarea{resize:vertical;min-height:70px;line-height:1.45}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:transparent}
+.seg{display:flex;gap:8px;margin:0 0 12px}
+.seg.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{
+  flex:1;appearance:none;font:inherit;font-weight:700;font-size:15px;cursor:pointer;
+  background:var(--bg);color:var(--body);border:1.5px solid var(--rule);border-radius:10px;padding:14px 8px;
+}
+.seg button small{display:block;font-weight:500;font-size:11px;color:var(--mut);margin-top:3px;letter-spacing:.02em}
+.seg button[aria-pressed="true"]{background:var(--teall);border-color:var(--teal);color:var(--teal)}
+.seg button[aria-pressed="true"] small{color:var(--teal);opacity:.85}
+.btn{
+  appearance:none;font:inherit;font-weight:700;font-size:16px;cursor:pointer;width:100%;
+  background:var(--teal);color:#fff;border:0;border-radius:11px;padding:15px;margin-top:4px;
+}
+:root[data-theme="dark"] .btn,@media (prefers-color-scheme:dark){.btn{color:#08201e}}
+.btn.ghost{background:var(--bg);color:var(--teal);border:1.5px solid var(--teal)}
+.btn.warn{background:var(--clay);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.sm{font-size:14px;padding:11px;width:auto}
+.row{display:flex;gap:8px}
+.chk{display:flex;gap:11px;align-items:flex-start;padding:11px 2px;border-bottom:1px solid var(--hair);cursor:pointer}
+.chk:last-child{border-bottom:0}
+.chk input{appearance:none;flex:0 0 auto;width:22px;height:22px;margin:0;border:1.5px solid var(--mut);border-radius:6px;background:var(--bg);position:relative;cursor:pointer}
+.chk input:checked{background:var(--teal);border-color:var(--teal)}
+.chk input:checked::after{content:"";position:absolute;left:7px;top:3px;width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(43deg)}
+.chk span{font-size:14.5px;line-height:1.4;color:var(--body)}
+.chk span b{display:block;font-weight:600;color:var(--ink)}
+.chk span em{display:block;font-style:normal;font-size:12.8px;line-height:1.38;color:var(--mut);margin-top:2px}
+.verdict{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--teall);border-radius:10px;padding:12px 14px;margin-top:10px}
+.verdict .lvl{font-weight:800;font-size:17px;color:var(--teal);letter-spacing:.01em}
+.verdict .cnt{font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--sand);color:var(--mut)}
+.pill.teal{background:var(--teall);color:var(--teal)}
+.pill.clay{background:var(--clayl);color:var(--clay)}
+.flag{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--hair);align-items:baseline}
+.flag:last-child{border-bottom:0}
+.flag time{flex:0 0 46px;font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+.flag .s{flex:0 0 26px;font-size:12px;font-weight:800;color:var(--teal)}
+.flag .t{flex:1;font-size:14.5px;line-height:1.4;color:var(--body)}
+.flag button{appearance:none;background:none;border:0;color:var(--mut);font-size:18px;line-height:1;cursor:pointer;padding:0 2px}
+.empty{color:var(--mut);font-size:14px;font-style:italic;padding:14px 0}
+.locked{background:var(--sand);border-style:dashed}
+.note{font-size:13px;line-height:1.5;color:var(--mut);margin:10px 0 0}
+.note b{color:var(--body)}
+.bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);
+  border-top:1px solid var(--rule);padding:10px 16px calc(env(safe-area-inset-bottom) + 10px);
+}
+.bar .inner{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .st{flex:1;font-size:13px;color:var(--mut);line-height:1.35}
+.bar .st b{color:var(--ink)}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:50;
+  background:var(--ink);color:var(--bg);font-size:14px;font-weight:600;
+  padding:11px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .22s;
+  max-width:88vw;text-align:center;
+}
+.toast.on{opacity:1}
+details{border-top:1px solid var(--hair);padding:10px 0}
+summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--teal);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";color:var(--mut)}
+details[open] summary::before{content:"▾ "}
+.ep{border:1px solid var(--rule);border-radius:11px;padding:13px;margin-bottom:11px;background:var(--card)}
+.ep h4{margin:0 0 10px;font-size:14px;color:var(--ink);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.ep h4 button{appearance:none;background:none;border:0;color:var(--mut);font-size:18px;cursor:pointer}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+hr{border:0;border-top:1px solid var(--hair);margin:16px 0}
+.warnbox{background:var(--clayl);border-left:3px solid var(--clay);border-radius:0 9px 9px 0;padding:12px 14px;font-size:13.5px;line-height:1.5;margin:0 0 12px}
+.warnbox b{color:var(--clay)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brow">
+    <div class="brand">Stance</div>
+    <div class="day" id="today"></div>
+  </div>
+  <nav role="tablist">
+    <button role="tab" id="t-flag"    aria-selected="true"  onclick="go('flag')">Flag</button>
+    <button role="tab" id="t-morning" aria-selected="false" onclick="go('morning')">Morning</button>
+    <button role="tab" id="t-evening" aria-selected="false" onclick="go('evening')">Evening</button>
+    <button role="tab" id="t-set"     aria-selected="false" onclick="go('set')">Setup</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- ══════════ FLAG ══════════ -->
+  <section id="v-flag">
+    <h2>Flag it</h2>
+    <p class="sub">Ten seconds. Time is stamped for you. Never type a marker into the conversation itself.</p>
+    <div class="seg grid4" id="flagStrand">
+      <button data-v="PH" aria-pressed="false">PH<small>physical health</small></button>
+      <button data-v="MH" aria-pressed="false">MH<small>mental health</small></button>
+      <button data-v="CL" aria-pressed="false">CL<small>career life</small></button>
+      <button data-v="E"  aria-pressed="false">E<small>everyday life</small></button>
+    </div>
+    <label class="chk" style="margin-bottom:12px"><input type="checkbox" id="flagCross">
+      <span>Sits across two strands &mdash; tag it, don’t agonise over which</span></label>
+    <div class="card">
+      <label class="fld" for="flagText">What happened, one phrase</label>
+      <textarea id="flagText" placeholder="reframed what I said in different words &mdash; I went back to it twice"></textarea>
+    </div>
+    <button class="btn" onclick="saveFlag()">Save flag</button>
+
+    <h2>Today</h2>
+    <div class="card" id="todayFlags"></div>
+  </section>
+
+  <!-- ══════════ MORNING ══════════ -->
+  <section id="v-morning" hidden>
+    <h2>Morning note</h2>
+    <p class="sub">Before the first strand-relevant chat. Write where each open question stands, tick what's true, and the stance falls out. <b>Once saved it locks</b> &mdash; that lock is the rigour.</p>
+    <div id="morningBody"></div>
+  </section>
+
+  <!-- ══════════ EVENING ══════════ -->
+  <section id="v-evening" hidden>
+    <h2>Evening note</h2>
+    <p class="sub">Turn today's flags into episodes. Stance is copied from this morning, not decided now.</p>
+    <div id="eveningBody"></div>
+  </section>
+
+  <!-- ══════════ SETUP ══════════ -->
+  <section id="v-set" hidden>
+    <h2>Setup</h2>
+    <div class="warnbox">
+      <b>Everything stays yours.</b> Entries are held on this phone and pushed straight to your own private repo.
+      Nothing is sent anywhere else. The token lives in this browser's storage only &mdash; clear your site data and
+      you'll re-enter it.
+    </div>
+    <div class="card">
+      <label class="fld" for="owner">GitHub user or org</label>
+      <input type="text" id="owner" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="frances">
+      <div style="height:12px"></div>
+      <label class="fld" for="repo">Private repo name</label>
+      <input type="text" id="repo" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="thesis-corpus">
+      <div style="height:12px"></div>
+      <label class="fld" for="branch">Branch</label>
+      <input type="text" id="branch" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="main">
+      <div style="height:12px"></div>
+      <label class="fld" for="token">Fine-grained token</label>
+      <input type="password" id="token" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="github_pat_...">
+      <p class="note">Scope it to <b>that one repository</b>, with <b>Contents: read and write</b> and nothing else.</p>
+    </div>
+    <button class="btn ghost" onclick="saveCfg()">Save settings</button>
+    <div style="height:8px"></div>
+    <button class="btn ghost" onclick="testConn()">Test the connection</button>
+
+    <h2>Thresholds</h2>
+    <p class="sub">Not yet piloted. If a week of real mornings all come out the same, move them here rather than rebuilding anything.</p>
+    <div class="card">
+      <label class="fld" for="thLoose">Indicators needed for <b>loose</b></label>
+      <input type="text" id="thLoose" inputmode="numeric" placeholder="2">
+      <div style="height:12px"></div>
+      <label class="fld" for="thDivided">Indicators needed for <b>divided</b></label>
+      <input type="text" id="thDivided" inputmode="numeric" placeholder="4">
+      <div style="height:12px"></div>
+      <label class="fld" for="thShape">Indicators needed for <b>open-ended</b></label>
+      <input type="text" id="thShape" inputmode="numeric" placeholder="2">
+      <div style="height:12px"></div>
+      <label class="fld" for="closeWeeks">Weeks a <b>closed</b> question keeps being asked</label>
+      <input type="text" id="closeWeeks" inputmode="numeric" placeholder="4">
+      <p class="note">A settling that doesn\u2019t hold is one of the findings. Stop asking too soon and you can\u2019t see it.</p>
+    </div>
+    <button class="btn ghost" onclick="saveCfg()">Save thresholds</button>
+
+    <h2>Open questions</h2>
+    <p class="sub">The things you carry. These appear every morning. Editing this list doesn't touch anything already saved.</p>
+    <div class="card" id="qList"></div>
+    <div class="card">
+      <label class="fld" for="newQ">Open a new one</label>
+      <input type="text" id="newQ" placeholder="Whether my body can be relied on">
+      <div style="height:12px"></div>
+      <label class="fld" for="newQWhy">Why has it become live? (required)</label>
+      <input type="text" id="newQWhy" placeholder="second opinion booked \u2014 it\u2019s properly open again">
+      <p class="note">Say what changed <b>in your life</b>. If the honest answer is
+      &ldquo;I noticed interesting chats about it&rdquo;, write that instead — it\u2019s still allowed,
+      but it has to be on the record, because picking topics that already looked good is
+      selecting on the outcome.</p>
+    </div>
+    <button class="btn ghost" onclick="addQ()">Open question</button>
+    <div style="height:8px"></div>
+    <button class="btn ghost" onclick="resetQuestions()">Reset to the starting set</button>
+    <p class="note">Replaces the list with the current starting set. Only possible <b>before</b> you
+    lock your first morning — after that the register is study data, and questions close rather
+    than disappear.</p>
+
+    <h2>Data</h2>
+    <div class="card">
+      <p class="note" id="dataStat"></p>
+    </div>
+    <button class="btn ghost" onclick="exportAll()">Download everything as JSON</button>
+    <div style="height:8px"></div>
+    <button class="btn warn" onclick="wipeSynced()">Clear entries already pushed</button>
+    <p class="note">Only removes what your repo already has. Anything unpushed stays put.</p>
+  </section>
+
+</div>
+
+<div class="bar">
+  <div class="inner">
+    <div class="st" id="syncStat">&nbsp;</div>
+    <button class="btn sm" id="syncBtn" onclick="sync()">Push</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ────────────────────────── constants ────────────────────────── */
+const STANCE_IND = [
+  {t:"I can\u2019t sum it up in one sentence",
+   g:"If someone asked today what I think, I couldn\u2019t give one answer I\u2019d still give tomorrow."},
+  {t:"I think two different things about it",
+   g:"Two explanations both feel true and I haven\u2019t picked between them."},
+  {t:"What I think has changed recently",
+   g:"In the last couple of weeks my read on it has shifted."},
+  {t:"Something outside me could settle it",
+   g:"A result, someone\u2019s decision, an answer I\u2019m waiting on."},
+  {t:"I keep going back to it",
+   g:"It comes up again and again and never quite finishes."},
+  {t:"Thinking about it does something to me",
+   g:"Not a neutral fact I can just recall \u2014 there\u2019s a reaction."}
+];
+const SHAPE_IND = [
+  {t:"I wasn\u2019t asking for an answer",
+   g:"Not looking something up, not asking it to do a task, not choosing between options."},
+  {t:"Nothing would have counted as finished",
+   g:"There was no point where I could say: done, got it."},
+  {t:"It was about me, not about the world",
+   g:"How I\u2019m reading something, or how I am \u2014 not a fact out there."},
+  {t:"I was carrying on, not starting",
+   g:"Picking up something from earlier rather than opening a new question."}
+];
+/* Session Safety Rules §1. The wording is theirs, not mine — if the rules change, change both. */
+const CHECKS = [
+  {k:"mood",     t:"Mood",            num:true,  hint:"0 very low · 5 baseline · 10 very elevated",
+   go:v=>v>=4&&v<=6, amber:v=>v===3||v===7, red:v=>v<=2||v>=8},
+  {k:"sleep",    t:"Sleep last night", opts:["usual","~2h short","very short or none"]},
+  {k:"distress", t:"Distress right now", num:true, hint:"0–10",
+   go:v=>v<=4, amber:v=>v===5||v===6, red:v=>v>=7},
+  {k:"glucose",  t:"Physical state",     opts:["feeling usual — eaten and checked","slightly off","I feel very unwell — or I haven’t eaten or checked"]},
+  {k:"why",      t:"What I want from it today", opts:["curious, or something I meant to think about","something I’m processing","I need to talk to it to calm down"]},
+  {k:"after",    t:"Free time today", opts:["real gaps","tight — short gaps only","none — booked until I sleep"]}
+];
+const STRANDS = {PH:"physical health", MH:"mental health", CL:"career life", E:"everyday life"};
+
+/* ────────────────────────── storage ────────────────────────── */
+function checkStatus(c){
+  if(!c) return null;
+  let reds=0, ambers=0, done=0;
+  CHECKS.forEach(ch=>{
+    const v=c[ch.k];
+    if(v===undefined||v===null||v==="") return;
+    done++;
+    if(ch.num){ const n=+v; if(ch.red(n)) reds++; else if(ch.amber(n)) ambers++; }
+    else { if(v===2) reds++; else if(v===1) ambers++; }
+  });
+  if(c.shift) reds++;                       // mood shifted sharply in the last 48h
+  return {done, total:CHECKS.length, reds, ambers,
+          status: reds?"red":(ambers?"amber":"green"), twoAmber: ambers>=2};
+}
+const LS = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d} },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true }catch(e){ toast("Storage is full or blocked"); return false } }
+};
+let cfg  = LS.get("sl:cfg", {owner:"",repo:"",branch:"main",token:"",thLoose:2,thDivided:4,thShape:2,closeWeeks:4});
+/* The starting set. Bump SEED_V whenever it changes: an install that has saved an older
+   seed and has not yet locked a single morning gets moved on quietly. Once any morning is
+   locked the register is study data and is never touched again. */
+const SEED = ["Finishing the MSLIS","Performing well at work",
+              "Whether people in my field think I\u2019m any good",
+              "Whether I\u2019m a \u201creal\u201d fiction author","Is my body feeling well",
+              "What my focus and mood are telling me"];
+const SEED_V = 3;
+let qs   = LS.get("sl:questions", SEED.slice());
+/* A question is a record with a life, not a string. Migrate anything older.
+   Called below, once the date helpers exist. */
+function migrateQs(){
+  if(qs.length && typeof qs[0]==="string"){
+    qs = qs.map((t,i)=>({id:"q"+(Date.now()+i).toString(36), text:t,
+                         addedOn:key(), reason:"carried over at setup", closedOn:null, closedReason:""}));
+    LS.set("sl:questions",qs);
+  }
+}
+function qById(id){ return qs.find(q=>q.id===id) || null; }
+function weeksSince(k){
+  const y=+k.slice(0,4), m=+k.slice(4,6)-1, d=+k.slice(6,8);
+  return (Date.now()-new Date(y,m,d).getTime())/(7*864e5);
+}
+/* Closed questions keep being asked for a while, because "it closed" is exactly
+   the claim the T2 check exists to test. They fall away on their own after that. */
+function activeQs(){
+  const w = +cfg.closeWeeks||4;
+  return qs.filter(q=>!q.closedOn || weeksSince(q.closedOn) <= w);
+}
+let days = LS.get("sl:days", {});          // {"20260924": {morning:{}, flags:[], episodes:[], pushed:false}}
+
+function save(){ LS.set("sl:days",days); LS.set("sl:cfg",cfg); LS.set("sl:questions",qs); paintBar(); }
+
+/* ────────────────────────── dates ────────────────────────── */
+const pad = n => String(n).padStart(2,"0");
+function key(d){ d=d||new Date(); return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`; }
+function hhmm(d){ d=d||new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function pretty(k){
+  const y=+k.slice(0,4), m=+k.slice(4,6)-1, dd=+k.slice(6,8);
+  return new Date(y,m,dd).toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+}
+migrateQs();
+function newQ(t){ return {id:"q"+(Date.now()+Math.floor(Math.random()*1e6)).toString(36),
+                          text:t, addedOn:key(), reason:"starting set", closedOn:null, closedReason:""}; }
+function anyMorningLocked(){ return Object.keys(days).some(k=>days[k] && days[k].morning); }
+function reseed(force){
+  if(anyMorningLocked()) return "locked";
+  if(!force && (cfg.seedVersion||0) >= SEED_V) return "current";
+  qs = SEED.map(newQ);
+  cfg.seedVersion = SEED_V;
+  LS.set("sl:questions", qs); LS.set("sl:cfg", cfg);
+  return "reseeded";
+}
+const _reseeded = reseed(false) === "reseeded";
+function resetQuestions(){
+  const r = reseed(true);
+  if(r === "locked"){ toast("You\u2019ve already locked a morning \u2014 the register is data now"); return; }
+  draftM = null; paintSet(); toast("Reset to the starting set");
+}
+function today(){
+  const k=key();
+  if(!days[k]) days[k]={morning:null,flags:[],episodes:[],pushedAt:null};
+  return days[k];
+}
+
+/* ────────────────────────── ui helpers ────────────────────────── */
+let toastT;
+function toast(msg){
+  const el=document.getElementById("toast");
+  el.textContent=msg; el.classList.add("on");
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("on"),2100);
+}
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function go(v){
+  ["flag","morning","evening","set"].forEach(n=>{
+    document.getElementById("v-"+n).hidden = (n!==v);
+    document.getElementById("t-"+n).setAttribute("aria-selected", n===v?"true":"false");
+  });
+  if(v==="morning") paintMorning();
+  if(v==="evening") paintEvening();
+  if(v==="set")     paintSet();
+  if(v==="flag")    paintFlags();
+  window.scrollTo(0,0);
+}
+
+/* ────────────────────────── levels ────────────────────────── */
+function stanceOf(n){
+  const L=+cfg.thLoose||2, D=+cfg.thDivided||4;
+  return n>=D ? "divided" : (n>=L ? "loose" : "fixed");
+}
+function shapeOf(n){ return n >= (+cfg.thShape||2) ? "open-ended" : "task/answer-shaped"; }
+
+/* ────────────────────────── FLAG ────────────────────────── */
+let flagStrand=null;
+document.getElementById("flagStrand").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-v]"); if(!b) return;
+  flagStrand = (flagStrand===b.dataset.v) ? null : b.dataset.v;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===flagStrand?"true":"false"));
+});
+function saveFlag(){
+  const txt=document.getElementById("flagText").value.trim();
+  if(!flagStrand){ toast("Pick a strand"); return; }
+  if(!txt){ toast("One phrase, at least"); return; }
+  const d=today();
+  const cross=document.getElementById("flagCross").checked;
+  d.flags.push({t:hhmm(), strand:flagStrand, text:txt, cross, at:new Date().toISOString()});
+  d.pushedAt=null;
+  save();
+  document.getElementById("flagText").value="";
+  document.getElementById("flagCross").checked=false;
+  flagStrand=null;
+  [...document.getElementById("flagStrand").children].forEach(x=>x.setAttribute("aria-pressed","false"));
+  paintFlags(); toast("Flagged");
+}
+function delFlag(i){
+  const d=today(); d.flags.splice(i,1); d.pushedAt=null; save(); paintFlags();
+}
+function paintFlags(){
+  const d=today(), el=document.getElementById("todayFlags");
+  if(!d.flags.length){ el.innerHTML='<div class="empty">Nothing flagged yet today.</div>'; return; }
+  el.innerHTML = d.flags.map((f,i)=>
+    `<div class="flag"><time>${esc(f.t)}</time><div class="s">${esc(f.strand)}</div>
+     <div class="t">${esc(f.text)}${f.cross?' <span class="pill clay">crossover</span>':''}</div><button onclick="delFlag(${i})" aria-label="Remove">&times;</button></div>`
+  ).join("");
+}
+
+/* ────────────────────────── MORNING ────────────────────────── */
+let draftM = null, draftC = null;
+
+function statusPanel(st){
+  if(!st) return "";
+  const map = {
+    green:["Green","Health threads as normal. Daily loop cap 3.","#2f6b4f","#e8f2ec"],
+    amber:["Amber","Health threads allowed, but <b>no new diagnosis or medication topics today</b>, and the daily loop cap drops to <b>2</b>.","#9d4e18","#fbf1e7"],
+    red:["Red","<b>No health threads today.</b> Career and everyday chats are fine.<br><br>This governs <b>what becomes data</b>, not what you’re allowed to do. If you end up talking to it anyway because you’re upset and there’s no one else awake &mdash; that’s allowed. Log <i>“red — not data”</i> and that’s the whole obligation. <b>§5 step 3 still stands: reach a person.</b>","#8d3030","#f8ecec"]
+  };
+  const [name,msg,col,bg] = map[st.status];
+  const c = draftC && Object.keys(draftC).length ? draftC : (today().morning||{}).checkin;
+  const stim = c && c.sleep===2 && (+c.mood)>=7
+    ? `<div style="margin-top:9px;padding-top:9px;border-top:1px solid rgba(0,0,0,.12)">
+         <b>Very little sleep with mood up.</b> \u00a73 asks you to watch for exactly this while
+         starting methylphenidate \u2014 and to tell your prescriber, <b>not the model</b>.</div>` : "";
+  const two = (st.status==="amber" && !st.twoAmber)
+    ? "<br><span style='opacity:.8'>One amber only &mdash; the two-amber rule hasn&rsquo;t tripped, but treat the day gently.</span>" : "";
+  return `<div style="background:${bg};border-left:3px solid ${col};border-radius:0 10px 10px 0;padding:12px 14px;margin:0 0 12px">
+    <div style="font:700 13px/1.3 inherit;color:${col};letter-spacing:.04em;text-transform:uppercase">${name}
+      <span style="font-weight:500;opacity:.75">&middot; ${st.reds} red, ${st.ambers} amber</span></div>
+    <div style="font-size:13.5px;line-height:1.5;margin-top:6px;color:var(--body)">${msg}${two}${stim}</div>
+  </div>`;
+}
+
+function paintCheckin(){
+  const el=document.getElementById("ciBody"); if(!el) return;
+  const st=checkStatus(draftC);
+  el.innerHTML = CHECKS.map((ch)=>{
+    const v=draftC[ch.k];
+    let row;
+    if(ch.num){
+      const n=(v===undefined||v==="")?null:+v;
+      const lvl = n===null ? "" : (ch.red(n)?"red":(ch.amber(n)?"amber":"go"));
+      const col = lvl==="red"?"#8d3030":(lvl==="amber"?"#9d4e18":"#2f6b4f");
+      row = `<div style="display:grid;grid-template-columns:repeat(11,1fr);gap:4px">
+        ${[0,1,2,3,4,5,6,7,8,9,10].map(x=>`<button class="numbox" data-k="${ch.k}" data-v="${x}" onclick="setCheck('${ch.k}',${x})"
+          style="padding:9px 0;font:700 12.5px/1 inherit;cursor:pointer;
+          border-radius:7px;border:1.4px solid ${n===x?col:'var(--rule)'};
+          background:${n===x?col:'var(--bg)'};color:${n===x?'#fff':'var(--body)'}">${x}</button>`).join("")}
+      </div>
+      <div style="font-size:11.5px;color:var(--mut);margin-top:5px">${ch.hint}</div>`;
+    } else {
+      row = `<div class="seg" style="margin:0">
+        ${ch.opts.map((o,j)=>`<button data-k="${ch.k}" data-v="${j}" aria-pressed="${v===j}" onclick="setCheck('${ch.k}',${j})"
+          style="font-size:12.5px;line-height:1.25;padding:11px 6px">${o}</button>`).join("")}</div>`;
+    }
+    return `<div style="padding:11px 0;border-bottom:1px solid var(--hair)">
+      <label class="fld">${ch.t}</label>${row}</div>`;
+  }).join("") +
+  `<label class="chk" style="border-bottom:0"><input type="checkbox" id="ciShift" ${draftC.shift?"checked":""}
+     onchange="setCheck('shift',this.checked)"><span><b>My mood has shifted sharply in the last 48 hours</b>
+     <em>On its own this makes the day red.</em></span></label>` +
+  (st.done<st.total ? `<p class="note" id="ciTodo"><b>${st.total-st.done}</b> still to answer.</p>` : statusPanel(st));
+}
+function setCheck(k,v){
+  draftC[k] = (k!=="shift" && draftC[k]===v) ? undefined : v;
+  paintCheckin();
+}
+
+function paintMorning(){
+  const d=today(), el=document.getElementById("morningBody");
+
+  if(d.morning){
+    const c=d.morning.checkin, st=checkStatus(c);
+    el.innerHTML = `
+      <div class="card locked">
+        <span class="pill teal">Locked ${esc(d.morning.lockedAt)}</span>
+        <p class="note" style="margin-top:10px">Saved. It stays as written even if the day changes your mind &mdash;
+        <b>a reading that moves is an evening or weekly finding, not a correction.</b></p>
+      </div>` +
+      (st ? statusPanel(st) : "") +
+      (c ? `<div class="card locked"><label class="fld">Check-in</label>
+        <div style="font-size:13.5px;line-height:1.7;color:var(--body)">
+          ${CHECKS.map(ch=>`${ch.t}: <b>${ch.num?esc(String(c[ch.k])):esc(ch.opts[c[ch.k]]||"—")}</b>`).join(" &middot; ")}
+          ${(c.focus!==undefined&&c.focus!=="")?` &middot; Focus: <b>${esc(String(c.focus))}</b>`:""}
+          ${c.shift?' &middot; <b style="color:var(--clay)">sharp mood shift in 48h</b>':""}
+        </div></div>` : "") +
+      d.morning.items.map(it=>`
+        <div class="card locked qcard">
+          <label class="fld">${esc(it.q)}</label>
+          <p style="margin:0 0 10px;color:var(--ink);font-size:15px;line-height:1.5">${esc(it.reading)||'<i style="color:var(--mut)">no reading written</i>'}</p>
+          <div class="verdict"><span class="lvl">${esc(it.stance)}</span><span class="cnt">${it.n} of 6 ticked</span></div>
+        </div>`).join("");
+    return;
+  }
+
+  if(!draftM) draftM = activeQs().map(q=>({qid:q.id, q:q.text, closed:!!q.closedOn, reading:"", ticks:STANCE_IND.map(()=>false)}));
+  if(!draftC) draftC = {};
+
+  el.innerHTML = `
+    <div class="card">
+      <label class="fld" style="font-size:13.5px">1 &middot; Check-in <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mut)">&mdash; about a minute, and it sets the day</span></label>
+      <div id="ciBody"></div>
+    </div>
+    <div class="card">
+      <label class="fld" for="ciFocus">Focus today</label>
+      <input type="text" id="ciFocus" inputmode="numeric" placeholder="0&ndash;10"
+             value="${draftC.focus===undefined?"":esc(String(draftC.focus))}"
+             oninput="draftC.focus=this.value.trim()===''?undefined:Number(this.value)">
+      <p class="note">Tracked as a number only. It does <b>not</b> set the day&rsquo;s status &mdash; the safety
+      thresholds in &sect;1 are yours to set with your clinician, and I&rsquo;m not inventing one for focus.</p>
+    </div>
+    <h2 style="margin-top:22px">2 &middot; Where each question stands</h2>` +
+    draftM.map((it,i)=>`
+    <div class="card qcard">
+      <label class="fld" for="rd${i}">${esc(it.q)}${it.closed?' <span class="pill clay">closed &mdash; still checking</span>':''}</label>
+      <input type="text" id="rd${i}" value="${esc(it.reading)}" placeholder="Where it stands, one line"
+             oninput="draftM[${i}].reading=this.value">
+      <details open>
+        <summary>Indicators &mdash; tick what&rsquo;s true this morning</summary>
+        ${STANCE_IND.map((s,j)=>`
+          <label class="chk"><input type="checkbox" ${it.ticks[j]?"checked":""}
+            onchange="draftM[${i}].ticks[${j}]=this.checked;paintVerdict(${i})"
+            ><span><b>${esc(s.t)}</b><em>${esc(s.g)}</em></span></label>`).join("")}
+      </details>
+      <div class="verdict" id="vd${i}"></div>
+    </div>`).join("") +
+    `<button class="btn" onclick="lockMorning()">Save and lock</button>
+     <p class="note">You won&rsquo;t be able to edit this afterwards. That&rsquo;s deliberate &mdash; if you could,
+     the thesis could only ever prove itself right.</p>`;
+  paintCheckin();
+  draftM.forEach((_,i)=>paintVerdict(i));
+}
+function paintVerdict(i){
+  const n=draftM[i].ticks.filter(Boolean).length;
+  const v=document.getElementById("vd"+i); if(!v) return;
+  v.innerHTML=`<span class="lvl">${stanceOf(n)}</span><span class="cnt">${n} of 6 ticked</span>`;
+}
+function lockMorning(){
+  const st=checkStatus(draftC);
+  if(!st || st.done<st.total){ toast("Finish the check-in first — it sets the day"); window.scrollTo(0,0); return; }
+  const d=today();
+  d.morning={
+    lockedAt:hhmm(), lockedIso:new Date().toISOString(),
+    checkin:Object.assign({}, draftC, {status:st.status, reds:st.reds, ambers:st.ambers}),
+    items:draftM.map(it=>{
+      const n=it.ticks.filter(Boolean).length;
+      return {qid:it.qid, q:it.q, reading:it.reading.trim(), ticks:it.ticks.slice(), n, stance:stanceOf(n)};
+    })
+  };
+  d.pushedAt=null; draftM=null; draftC=null; save(); paintMorning(); paintBar();
+  toast(st.status==="red" ? "Locked · red — no health threads today" : "Locked · "+st.status);
+}
+/* ────────────────────────── EVENING ────────────────────────── */
+function paintEvening(){
+  const d=today(), el=document.getElementById("eveningBody");
+  const stanceFor = qid => {
+    if(!d.morning || !qid) return null;
+    const it=d.morning.items.find(x=>(x.qid||x.q)===qid);
+    return it?it.stance:null;
+  };
+  let html="";
+
+  if(!d.morning){
+    html += `<div class="warnbox"><b>No morning note today.</b> Episodes will be tagged
+      <span class="mono">T0-absent</span> and their stance coded from the episode's first message instead.
+      Worth checking later whether these differ from the rest.</div>`;
+  }
+
+  html += `<div class="card"><label class="fld">Today's flags</label>` +
+    (d.flags.length
+      ? d.flags.map(f=>`<div class="flag"><time>${esc(f.t)}</time><div class="s">${esc(f.strand)}</div><div class="t">${esc(f.text)}${f.cross?' <span class="pill clay">crossover</span>':''}</div></div>`).join("")
+      : '<div class="empty">None. If that’s wrong, log it as a deviation rather than back-filling.</div>') +
+    `</div>`;
+
+  html += d.episodes.map((ep,i)=>{
+    const n = ep.shapeTicks.filter(Boolean).length;
+    const inherited = stanceFor(ep.qid);
+    return `
+    <div class="ep">
+      <h4><span>Episode ${i+1} <span class="pill">${esc(ep.strand||"?")}</span>
+        ${ep.cross?'<span class="pill clay">crossover</span>':''}
+        ${ep.t0absent?'<span class="pill clay">T0-absent</span>':''}</span>
+        <button onclick="delEp(${i})" aria-label="Remove">&times;</button></h4>
+
+      <label class="fld">Strand</label>
+      <div class="seg grid4">
+        ${Object.keys(STRANDS).map(s=>`<button data-v="${s}" aria-pressed="${ep.strand===s}"
+           onclick="setEp(${i},'strand','${s}')">${s}<small>${esc(STRANDS[s])}</small></button>`).join("")}
+      </div>
+
+      <label class="chk"><input type="checkbox" ${ep.cross?"checked":""}
+        onchange="setEp(${i},'cross',this.checked)"><span>Sits across two strands</span></label>
+
+      <label class="fld" for="eq${i}">Which open question</label>
+      <select id="eq${i}" onchange="setEp(${i},'qid',this.value)">
+        <option value="">— none of them (new thing) —</option>
+        ${activeQs().map(q=>`<option value="${esc(q.id)}" ${ep.qid===q.id?"selected":""}>${esc(q.text)}${q.closedOn?" (closed)":""}</option>`).join("")}
+      </select>
+      <div class="verdict" style="margin-top:8px">
+        <span class="lvl">${inherited ? esc(inherited) : (ep.stanceManual||"set below")}</span>
+        <span class="cnt">${inherited ? "from this morning · not editable" : "no morning entry — code from the first message"}</span>
+      </div>
+      ${inherited ? "" : `
+      <div class="seg" style="margin-top:8px">
+        ${["fixed","loose","divided"].map(s=>`<button data-v="${s}" aria-pressed="${ep.stanceManual===s}"
+          onclick="setEp(${i},'stanceManual','${s}')">${s}</button>`).join("")}
+      </div>`}
+
+      <hr>
+      <label class="fld">Shape &mdash; judged from my opening move</label>
+      ${SHAPE_IND.map((s,j)=>`
+        <label class="chk shape"><input type="checkbox" class="shapebox" ${ep.shapeTicks[j]?"checked":""}
+          onchange="setShape(${i},${j},this.checked)"
+          ><span><b>${esc(s.t)}</b><em>${esc(s.g)}</em></span></label>`).join("")}
+      <div class="verdict"><span class="lvl">${shapeOf(n)}</span><span class="cnt">${n} of 4 ticked</span></div>
+
+      <hr>
+      <label class="fld" for="ew${i}">What was being worked on</label>
+      <input type="text" id="ew${i}" value="${esc(ep.worked)}" oninput="setEp(${i},'worked',this.value)">
+      <div style="height:12px"></div>
+      <label class="fld" for="em${i}">Did a meaning move?</label>
+      <textarea id="em${i}" oninput="setEp(${i},'moved',this.value)"
+        placeholder="Did something come back rephrased and change what I thought next?">${esc(ep.moved)}</textarea>
+    </div>`;
+  }).join("");
+
+  html += `<button class="btn ghost" onclick="addEp()">Add an episode</button>`;
+  el.innerHTML=html;
+}
+function addEp(){
+  const d=today();
+  d.episodes.push({strand:"",qid:"",q:"",stanceManual:"",shapeTicks:[false,false,false,false],worked:"",moved:"",cross:false,t0absent:!d.morning});
+  d.pushedAt=null; save(); paintEvening();
+}
+function delEp(i){ const d=today(); d.episodes.splice(i,1); d.pushedAt=null; save(); paintEvening(); }
+function setEp(i,k,v){
+  const d=today(), ep=d.episodes[i];
+  ep[k] = (k==="strand" && ep[k]===v) ? "" : v;
+  if(k==="qid"){
+    const q=qById(v); ep.q = q?q.text:"";
+    ep.t0absent = !(d.morning && d.morning.items.some(x=>(x.qid||x.q)===v));
+  }
+  d.pushedAt=null; save();
+  if(k==="strand"||k==="qid"||k==="stanceManual") paintEvening();
+}
+function setShape(i,j,val){
+  const d=today(); d.episodes[i].shapeTicks[j]=val; d.pushedAt=null; save(); paintEvening();
+}
+
+/* ────────────────────────── SETUP ────────────────────────── */
+function paintSet(){
+  ["owner","repo","branch","token"].forEach(k=>document.getElementById(k).value=cfg[k]||"");
+  document.getElementById("thLoose").value=cfg.thLoose;
+  document.getElementById("thDivided").value=cfg.thDivided;
+  document.getElementById("thShape").value=cfg.thShape;
+  document.getElementById("closeWeeks").value=cfg.closeWeeks||4;
+  document.getElementById("qList").innerHTML = qs.length
+    ? qs.map(q=>{
+        const w=q.closedOn?weeksSince(q.closedOn):0, gone=q.closedOn && w>(+cfg.closeWeeks||4);
+        return `<div class="flag" style="align-items:flex-start">
+          <div class="t"><b style="color:var(--ink)">${esc(q.text)}</b>
+            <div style="font-size:12px;color:var(--mut);margin-top:3px">
+              opened ${esc(q.addedOn)}${q.reason?" \u00b7 "+esc(q.reason):""}
+              ${q.closedOn?`<br>closed ${esc(q.closedOn)}${q.closedReason?" \u00b7 "+esc(q.closedReason):""}
+                 ${gone?" \u00b7 no longer asked":" \u00b7 still asked each morning"}`:""}
+            </div></div>
+          <button onclick="${q.closedOn?`reopenQ('${q.id}')`:`closeQ('${q.id}')`}"
+            style="font-size:12px;font-weight:700;color:var(--teal);white-space:nowrap">${q.closedOn?"reopen":"close"}</button>
+        </div>`;
+      }).join("")
+    : '<div class="empty">None yet.</div>';
+  const ks=Object.keys(days), un=ks.filter(k=>!days[k].pushedAt).length;
+  document.getElementById("dataStat").innerHTML =
+    `<b>${ks.length}</b> day${ks.length===1?"":"s"} on this device · <b>${un}</b> not yet pushed.`;
+}
+function saveCfg(){
+  ["owner","repo","branch","token"].forEach(k=>cfg[k]=document.getElementById(k).value.trim());
+  cfg.branch = cfg.branch || "main";
+  const n=(id,d)=>{ const v=parseInt(document.getElementById(id).value,10); return isNaN(v)?d:Math.max(1,v); };
+  cfg.thLoose=n("thLoose",2); cfg.thDivided=n("thDivided",4); cfg.thShape=n("thShape",2);
+  cfg.closeWeeks=n("closeWeeks",4);
+  if(cfg.thDivided<=cfg.thLoose){ cfg.thDivided=cfg.thLoose+1; toast("Divided must need more than loose"); }
+  save(); paintSet(); toast("Saved");
+}
+function addQ(){
+  const el=document.getElementById("newQ"), v=el.value.trim();
+  const rl=document.getElementById("newQWhy"), why=rl.value.trim();
+  if(!v) return;
+  if(qs.some(q=>q.text===v && !q.closedOn)){ toast("Already open"); return; }
+  if(!why){ toast("Say why it became live \u2014 that\u2019s the audit trail"); rl.focus(); return; }
+  qs.push({id:"q"+Date.now().toString(36), text:v, addedOn:key(), reason:why, closedOn:null, closedReason:""});
+  el.value=""; rl.value=""; draftM=null; save(); paintSet(); toast("Opened \u00b7 reason recorded");
+}
+/* Nothing is ever deleted. A question that settles is CLOSED, dated and kept \u2014
+   because "it settled" is precisely the claim the delayed check exists to test. */
+function closeQ(id){
+  const q=qById(id); if(!q) return;
+  const why=prompt(`Close "${q.text}"?\n\nIt keeps being asked each morning for a few more weeks, because whether it stays settled is the finding.\n\nWhy is it closing?`,"");
+  if(why===null) return;
+  q.closedOn=key(); q.closedReason=why.trim(); draftM=null; save(); paintSet(); toast("Closed \u00b7 still checking");
+}
+function reopenQ(id){
+  const q=qById(id); if(!q) return;
+  const why=prompt(`Reopen "${q.text}"?\n\nA question that reopens is a finding in itself \u2014 it means a settling didn\u2019t hold.\n\nWhat reopened it?`,"");
+  if(why===null) return;
+  q.reason=(q.reason?q.reason+" \u00b7 ":"")+`reopened ${key()}: ${why.trim()}`;
+  q.closedOn=null; q.closedReason=""; draftM=null; save(); paintSet(); toast("Reopened \u00b7 that\u2019s data");
+}
+function exportAll(){
+  const blob=new Blob([JSON.stringify({exported:new Date().toISOString(),questionRegister:qs,days},null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=`stance-${key()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function wipeSynced(){
+  const k0=key(), gone=Object.keys(days).filter(k=>days[k].pushedAt && k!==k0);
+  if(!gone.length){ toast("Nothing to clear"); return; }
+  if(!confirm(`Remove ${gone.length} day(s) from this phone?\n\nThey are already in your repo. Today stays.`)) return;
+  gone.forEach(k=>delete days[k]); save(); paintSet(); toast("Cleared");
+}
+
+/* ────────────────────────── rendering to markdown + json ────────────────────────── */
+function dayMarkdown(k,d){
+  const L=[];
+  L.push(`# ${k.slice(0,4)}-${k.slice(4,6)}-${k.slice(6,8)} · D-${k}`,"");
+  if(d.morning){
+    L.push(`## T0 · Morning (locked ${d.morning.lockedAt})`,"");
+    const c=d.morning.checkin;
+    if(c){
+      const st=checkStatus(c);
+      L.push(`**Check-in: ${st?st.status.toUpperCase():"?"}** \u2014 ${st?st.reds:0} red, ${st?st.ambers:0} amber`,"");
+      L.push("| Check | Answer |","|---|---|");
+      CHECKS.forEach(ch=>L.push(`| ${ch.t} | ${ch.num?c[ch.k]:(ch.opts[c[ch.k]]||"\u2014")} |`));
+      if(c.focus!==undefined && c.focus!=="") L.push(`| Focus (not a gate) | ${c.focus} |`);
+      if(c.shift) L.push("| Mood shifted sharply in 48h | **yes** |");
+      L.push("");
+      if(st && st.status==="red") L.push("> **Red \u2014 no health threads today.** If one came up anyway the stop rules applied at once and it is logged as a deviation. That entry counts as data.","");
+      if(st && st.status==="amber") L.push("> **Amber \u2014 no new diagnosis or medication topics today; daily loop cap 2.**","");
+    }
+    L.push("| Open question | Reading | Ticked | Stance |","|---|---|---|---|");
+    d.morning.items.forEach(it=>L.push(`| ${it.q} | ${it.reading||""} | ${it.n}/6 | **${it.stance}** |`));
+    L.push("");
+  } else {
+    L.push("## T0 · Morning","","_No morning note. Deviation — episodes today are `T0-absent`._","");
+  }
+  L.push("## Flags","");
+  d.flags.length
+    ? d.flags.forEach(f=>L.push(`- ⚑ ${f.t} ${f.strand}${f.cross?" (crossover)":""}: ${f.text}`))
+    : L.push("_None._");
+  L.push("");
+  L.push("## T1 · Episodes","");
+  if(!d.episodes.length){ L.push("_None._",""); }
+  d.episodes.forEach((ep,i)=>{
+    const st = stanceForEp(d,ep);
+    const n  = ep.shapeTicks.filter(Boolean).length;
+    L.push(`### Episode ${i+1} — ${ep.strand||"?"}${ep.t0absent?" · `T0-absent`":""}`,"");
+    L.push(`- **Open question:** ${ep.q||"—"}`);
+    L.push(`- **Stance:** ${st||"—"}${ep.t0absent?" (coded from the first message)":" (from the morning note)"}`);
+    L.push(`- **Shape:** ${shapeOf(n)} (${n}/4)`);
+    L.push(`- **Worked on:** ${ep.worked||"—"}`);
+    L.push(`- **Did a meaning move:** ${ep.moved||"—"}`);
+    L.push("");
+  });
+  return L.join("\n");
+}
+function stanceForEp(d,ep){
+  if(d.morning && ep.qid){ const it=d.morning.items.find(x=>(x.qid||x.q)===ep.qid); if(it) return it.stance; }
+  return ep.stanceManual||"";
+}
+function dayJson(k,d){
+  return {
+    day:`D-${k}`, date:`${k.slice(0,4)}-${k.slice(4,6)}-${k.slice(6,8)}`,
+    morning: d.morning ? {lockedAt:d.morning.lockedIso, checkin:d.morning.checkin||null, items:d.morning.items} : null,
+    flags: d.flags.map(f=>({t:f.t, strand:f.strand, crossover:!!f.cross, text:f.text, at:f.at})),
+    episodes: d.episodes.map(ep=>{
+      const n=ep.shapeTicks.filter(Boolean).length;
+      return {strand:ep.strand, crossover:!!ep.cross, question:ep.q, stance:stanceForEp(d,ep), t0absent:!!ep.t0absent,
+              shape:shapeOf(n), shapeTicks:ep.shapeTicks, shapeN:n, worked:ep.worked, moved:ep.moved};
+    }),
+    thresholds:{loose:+cfg.thLoose, divided:+cfg.thDivided, openEnded:+cfg.thShape, closedAskedForWeeks:+cfg.closeWeeks||4},
+    questionRegister: qs.map(q=>({id:q.id, text:q.text, addedOn:q.addedOn, reason:q.reason,
+                                  closedOn:q.closedOn||null, closedReason:q.closedReason||""})),
+    app:"stance-logger/2.6"
+  };
+}
+
+/* ────────────────────────── GitHub ────────────────────────── */
+const API="https://api.github.com";
+function b64(str){
+  const bytes=new TextEncoder().encode(str);
+  let bin=""; bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin);
+}
+function gh(path,opts){
+  return fetch(`${API}/repos/${cfg.owner}/${cfg.repo}${path}`,Object.assign({
+    headers:{Authorization:`Bearer ${cfg.token}`,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"}
+  },opts||{}));
+}
+async function putFile(path,content,msg){
+  let sha=null;
+  const head=await gh(`/contents/${path}?ref=${encodeURIComponent(cfg.branch)}`);
+  if(head.status===200){ sha=(await head.json()).sha; }
+  else if(head.status!==404){ throw new Error(`Read ${path} — ${head.status}`); }
+  const res=await gh(`/contents/${path}`,{
+    method:"PUT",
+    headers:{Authorization:`Bearer ${cfg.token}`,Accept:"application/vnd.github+json","Content-Type":"application/json"},
+    body:JSON.stringify({message:msg,content:b64(content),branch:cfg.branch,sha:sha||undefined})
+  });
+  if(!res.ok){ throw new Error(`Write ${path} — ${res.status} ${(await res.text()).slice(0,120)}`); }
+  return res.json();
+}
+async function testConn(){
+  if(!cfg.owner||!cfg.repo||!cfg.token){ toast("Fill in owner, repo and token"); return; }
+  toast("Checking…");
+  try{
+    const r=await gh("");
+    if(r.status===200){ const j=await r.json(); toast(j.private?"Connected · private ✓":"Connected — but this repo is PUBLIC"); }
+    else if(r.status===404) toast("Not found — check the name, or the token's repo scope");
+    else if(r.status===401) toast("Token rejected");
+    else toast("GitHub said "+r.status);
+  }catch(e){ toast("No connection"); }
+}
+let syncing=false;
+async function sync(){
+  if(syncing) return;
+  if(!cfg.owner||!cfg.repo||!cfg.token){ go("set"); toast("Set up the repo first"); return; }
+  const pend=Object.keys(days).filter(k=>!days[k].pushedAt).sort();
+  if(!pend.length){ toast("Nothing waiting"); return; }
+  syncing=true; document.getElementById("syncBtn").disabled=true;
+  let ok=0, failed=null;
+  for(const k of pend){
+    const d=days[k];
+    try{
+      await putFile(`days/D-${k}.md`,   dayMarkdown(k,d),                 `day D-${k}`);
+      await putFile(`data/D-${k}.json`, JSON.stringify(dayJson(k,d),null,2), `data D-${k}`);
+      d.pushedAt=new Date().toISOString(); ok++; save();
+    }catch(e){ failed=e.message; break; }
+  }
+  syncing=false; document.getElementById("syncBtn").disabled=false;
+  paintBar();
+  toast(failed ? `Pushed ${ok}, then: ${failed}` : `Pushed ${ok} day${ok===1?"":"s"} ✓`);
+}
+
+/* ────────────────────────── chrome ────────────────────────── */
+function paintBar(){
+  const pend=Object.keys(days).filter(k=>!days[k].pushedAt);
+  const el=document.getElementById("syncStat");
+  if(!cfg.owner||!cfg.repo||!cfg.token){ el.innerHTML="<b>Not connected</b> — entries are safe on this phone"; return; }
+  if(!pend.length){ el.innerHTML="Everything pushed"; return; }
+  el.innerHTML = `<b>${pend.length}</b> day${pend.length===1?"":"s"} waiting` +
+    (navigator.onLine?"":" · offline, will keep");
+}
+window.addEventListener("online",paintBar);
+window.addEventListener("offline",paintBar);
+
+document.getElementById("today").textContent = pretty(key());
+today(); save(); paintFlags(); paintBar(); go("flag");
+if(_reseeded) setTimeout(()=>toast("Open questions updated to the current set"), 700);
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
